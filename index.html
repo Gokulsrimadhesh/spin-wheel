@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spin the Wheel - BCA Tech Quiz</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ====== MAIN CONTAINER ====== -->
+  <div class="container">
+
+    <!-- Header -->
+    <header>
+      <h1 class="title">🎯 Spin the Wheel</h1>
+      <p class="subtitle"> Technical Event Quiz Challenge</p>
+    </header>
+
+    <!-- ====== WHEEL SECTION ====== -->
+    <div class="wheel-section" id="wheelSection">
+      <div class="wheel-wrapper">
+        <div class="pointer">▼</div>
+        <div class="wheel" id="wheel">
+          <canvas id="wheelCanvas" width="500" height="500"></canvas>
+        </div>
+      </div>
+      <button class="spin-btn" id="spinBtn">🎰 SPIN</button>
+    </div>
+
+    <!-- ====== TOPIC DISPLAY ====== -->
+    <div class="topic-display" id="topicDisplay">
+      <span class="topic-label">Selected Topic:</span>
+      <span class="topic-name" id="topicName">—</span>
+    </div>
+
+    <!-- ====== QUIZ OVERLAY ====== -->
+    <div class="quiz-overlay" id="quizOverlay">
+      <div class="quiz-card" id="quizCard">
+        <div class="quiz-header">
+          <span class="quiz-topic" id="quizTopic">Topic Name</span>
+          <span class="quiz-progress" id="quizProgress">Question 1 of 5</span>
+        </div>
+        <div class="quiz-body">
+          <p class="quiz-question" id="quizQuestion">Question text goes here?</p>
+          <div class="options" id="optionsContainer">
+            <button class="option-btn" data-index="0">A. Option 1</button>
+            <button class="option-btn" data-index="1">B. Option 2</button>
+            <button class="option-btn" data-index="2">C. Option 3</button>
+            <button class="option-btn" data-index="3">D. Option 4</button>
+          </div>
+          <div class="answer-reveal" id="answerReveal">
+            <span class="correct-label">✔ Correct Answer:</span>
+            <span class="correct-answer" id="correctAnswer"></span>
+          </div>
+        </div>
+        <div class="quiz-footer">
+          <button class="show-answer-btn" id="showAnswerBtn">💡 Show Answer</button>
+          <button class="next-btn" id="nextBtn">Next Question →</button>
+        </div>
+        <div class="completed-msg" id="completedMsg">
+          <p>🎉 All questions for this topic are completed. Please spin again.</p>
+          <button class="spin-again-btn" id="spinAgainBtn">🔄 Spin Again</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
