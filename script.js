@@ -2,7 +2,7 @@
    SPIN THE WHEEL - BCA QUIZ APPLICATION
    ============================================ */
 
-// ====== QUIZ DATA: 9 Topics × 5 Questions ======
+// ====== QUIZ DATA: 8 Topics × 5 Questions ======
 const quizData = [
   {
     id: 0,
@@ -223,37 +223,6 @@ const quizData = [
   },
   {
     id: 7,
-    topic: "Debug the Code",
-    questions: [
-      {
-        question: "What is the error in: console.log('Hello World')",
-        options: ["Missing semicolon", "No error", "Missing brackets", "Wrong case"],
-        correct: 1
-      },
-      {
-        question: "What type of error is: undefined is not a function?",
-        options: ["Syntax error", "Runtime error", "Logical error", "Compilation error"],
-        correct: 1
-      },
-      {
-        question: "What does the debugger statement do?",
-        options: ["Pauses execution", "Prints a log", "Ends the program", "Throws an error"],
-        correct: 0
-      },
-      {
-        question: "Which tool is commonly used to debug JavaScript?",
-        options: ["Chrome DevTools", "VS Code Terminal", "Command Prompt", "Task Manager"],
-        correct: 0
-      },
-      {
-        question: "What does 'NaN' stand for?",
-        options: ["Not a Null", "Not a Number", "Null and Numeric", "Negative Number"],
-        correct: 1
-      }
-    ]
-  },
-  {
-    id: 8,
     topic: "Data Structures",
     questions: [
       {
@@ -285,7 +254,7 @@ const quizData = [
   }
 ];
 
-// ====== TOPIC COLORS (9 vibrant colors for wheel sections) ======
+// ====== TOPIC COLORS (8 vibrant colors for wheel sections) ======
 const topicColors = [
   '#FF6B6B', // Palindrome - Red
   '#4ECDC4', // Fibonacci - Teal
@@ -294,7 +263,6 @@ const topicColors = [
   '#FFEAA7', // Strings - Yellow
   '#DDA0DD', // SQL - Plum
   '#98D8C8', // HTML & CSS - Mint
-  '#F7DC6F', // Debug the Code - Gold
   '#BB8FCE'  // Data Structures - Purple
 ];
 
@@ -318,7 +286,7 @@ const completedMsg = document.getElementById('completedMsg');
 const spinAgainBtn = document.getElementById('spinAgainBtn');
 
 // ====== STATE ======
-const NUM_SECTIONS = quizData.length; // 9
+const NUM_SECTIONS = quizData.length; // 8
 const SECTION_ANGLE = 360 / NUM_SECTIONS;
 
 let currentRotation = 0;
@@ -495,7 +463,8 @@ function openQuiz(topicIndex) {
 
   // Find next unanswered question
   let nextQIndex = -1;
-  for (let i = 0; i < topic.questions.length; i++) {
+  for (let i = 0; i < 
+    topic.questions.length; i++) {
     if (!state.answered.has(i)) {
       nextQIndex = i;
       break;
