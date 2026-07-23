@@ -325,6 +325,7 @@ let currentRotation = 0;
 let isSpinning = false;
 let selectedTopicIndex = -1;
 let currentQuestionIndex = 0;
+let optionLocked = false;
 
 // Track completed topics and answered questions per topic
 // Each topic: { completed: bool, answered: Set(questionIndices) }
@@ -443,9 +444,14 @@ function spinWheel() {
   // Generate random extra spins (5-8 full rotations) + random section
   const extraRotations = 5 + Math.random() * 3;
   const randomIndex = Math.floor(Math.random() * NUM_SECTIONS);
-  const targetAngle = randomIndex * SECTION_ANGLE;
 
-  // Calculate rotation (clockwise, smooth)
+  // Target a RANDOM position within the selected section (not the edge)
+  // Section <randomIndex> spans from (randomIndex*SECTION_ANGLE) to ((randomIndex+1)*SECTION_ANGLE) degrees clockwise from top.
+  // Pick a random angle within this section.
+  const sectionStart = randomIndex * SECTION_ANGLE;
+  const targetAngle = sectionStart + Math.random() * SECTION_ANGLE;
+  // Rotating clockwise by R brings the point at (360 - R mod 360)° to the pointer (top).
+  // We want point at targetAngle to land at the pointer: 360 - R = targetAngle → R = 360 - targetAngle
   const totalRotation = 360 * extraRotations + (360 - targetAngle);
   currentRotation += totalRotation;
 
@@ -455,7 +461,9 @@ function spinWheel() {
   // After spin completes
   setTimeout(() => {
     isSpinning = false;
-    selectedTopicIndex = randomIndex;
+    const normalized = ((currentRotation % 360) + 360) % 360;
+selectedTopicIndex =
+Math.floor(((360 - normalized) % 360) / SECTION_ANGLE);
     const topic = quizData[selectedTopicIndex].topic;
     topicName.textContent = topic;
     topicDisplay.classList.add('visible');
@@ -540,7 +548,6 @@ function showQuestion(topicIndex, qIndex) {
 }
 
 // ====== SELECT OPTION ======
-let optionLocked = false;
 
 function selectOption(btn, selectedIdx, correctIdx, topicIndex, qIndex) {
   if (optionLocked) return;
@@ -564,9 +571,9 @@ function selectOption(btn, selectedIdx, correctIdx, topicIndex, qIndex) {
   // Show answer automatically after selection (for quizmaster convenience)
   showAnswerBtn.click();
 
-  // Mark as answered (but we'll mark when next is clicked)
-  // Actually store the answered state when next is pressed
-  window._pendingAnswer = { topicIndex, qIndex };
+  // Mark question as answered IMMEDIATELY — prevents the same question
+  // from reappearing if the user closes the overlay or spins again
+  topicState[topicIndex].answered.add(qIndex);
 }
 
 // ====== SHOW ANSWER ======
@@ -593,12 +600,6 @@ document.addEventListener('keydown', (e) => {
 
 // ====== NEXT QUESTION ======
 nextBtn.addEventListener('click', () => {
-  // Mark question as answered
-  if (window._pendingAnswer) {
-    topicState[window._pendingAnswer.topicIndex].answered.add(window._pendingAnswer.qIndex);
-    window._pendingAnswer = null;
-  }
-
   optionLocked = false;
 
   const topicIdx = selectedTopicIndex;
@@ -634,27 +635,32 @@ nextBtn.addEventListener('click', () => {
   showQuestion(topicIdx, currentQuestionIndex);
 });
 
-// ====== SPIN AGAIN (from completed message) ======
-spinAgainBtn.addEventListener('click', () => {
+// ====== CLOSE QUIZ OVERLAY & MARK QUESTION AS SEEN ======
+function closeQuizOverlay() {
+  // If a question is currently displayed and the user didn't select an option,
+  // mark it as "seen" so it won't repeat next time they spin to this topic.
+  if (selectedTopicIndex >= 0 && !optionLocked) {
+    topicState[selectedTopicIndex].answered.add(currentQuestionIndex);
+  }
   quizOverlay.classList.remove('active');
   spinBtn.disabled = false;
   optionLocked = false;
-  window._pendingAnswer = null;
-});
+}
+
+// ====== SPIN AGAIN (from completed message) ======
+spinAgainBtn.addEventListener('click', closeQuizOverlay);
 
 // ====== CLICK OUTSIDE QUIZ TO CLOSE ======
 quizOverlay.addEventListener('click', (e) => {
   if (e.target === quizOverlay) {
-    quizOverlay.classList.remove('active');
-    spinBtn.disabled = false;
+    closeQuizOverlay();
   }
 });
 
 // ====== KEYBOARD SHORTCUTS ======
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && quizOverlay.classList.contains('active')) {
-    quizOverlay.classList.remove('active');
-    spinBtn.disabled = false;
+    closeQuizOverlay();
   }
 });
 
